@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:english_words/english_words.dart';
+import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
 
 void main() {
@@ -47,64 +48,96 @@ class MyAppState extends ChangeNotifier {
 }
 
 //split homepage into two
-class MyHomePage extends StatelessWidget {
+class MyHomePage extends StatefulWidget {
+  @override
+  State<MyHomePage> createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+
+
+  var selectedIndex =0;
+
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Row(
-        children: [
-          Expanded(
-            child: SafeArea(
-              child: NavigationRail(
-                extended: false,
-                destinations: [
-                  NavigationRailDestination(
-                    icon: Icon(Icons.home),
-                    label: Text(
-                      'Home',
-                      style: TextStyle(
-                        fontFamily: 'MontserratAlternates',
-                        fontSize: 22,
+
+    Widget page;
+    switch (selectedIndex){
+      case 0:
+        page = Generator();
+        break;
+      case 1:
+        page = FavouritesPage();
+        break;
+      case 2:
+        page = Placeholder();
+        break;
+      default:
+        throw UnimplementedError('no widget for $selectedIndex');
+    }
+    return LayoutBuilder(
+      builder: (context,constraints) {
+        return Scaffold(
+          body: Row(
+            children: [
+              SafeArea(
+                child: NavigationRail(
+                  extended: constraints.maxWidth >= 600,
+                  destinations: [
+                    NavigationRailDestination(
+                      icon: Icon(Icons.home),
+                      label: Text(
+                        'Home',
+                        style: TextStyle(
+                          fontFamily: 'MontserratAlternates',
+                          fontSize: 22,
+                        ),
                       ),
                     ),
-                  ),
-                  NavigationRailDestination(
-                    icon: Icon(Icons.favorite),
-                    label: Text(
-                      'Favorites',
-                      style: TextStyle(
-                        fontFamily: 'MontserratAlternates',
-                        fontSize: 22,
+                    NavigationRailDestination(
+                      icon: Icon(Icons.favorite),
+                      label: Text(
+                        'Favorites',
+                        style: TextStyle(
+                          fontFamily: 'MontserratAlternates',
+                          fontSize: 22,
+                        ),
                       ),
                     ),
-                  ),
-                  NavigationRailDestination(
-                    icon: Icon(Icons.my_library_add), 
-                    label:  Text(
-                      'Library',
-                      style: TextStyle(
-                        fontFamily: 'MontserratAlternates',
-                        fontSize: 22,
+                    NavigationRailDestination(
+                      icon: Icon(Icons.my_library_add), 
+                      label:  Text(
+                        'Library',
+                        style: TextStyle(
+                          fontFamily: 'MontserratAlternates',
+                          fontSize: 22,
+                        ),
                       ),
                     ),
-                  ),
-          
-                ],
-                selectedIndex: 0,
-                onDestinationSelected: (value) {
-                  print('selected: $value');
-                },
+              
+                  ],
+                  selectedIndex: selectedIndex,
+                  onDestinationSelected: (value) {
+                   
+                      setState(() {
+                        selectedIndex=value;
+                      });
+
+
+                  },
+                ),
               ),
-            ),
+              Expanded(
+                child: Container(
+                  color: Theme.of(context).colorScheme.primaryContainer,
+                  child: page,
+                ),
+              ),
+            ],
           ),
-          Expanded(
-            child: Container(
-              color: Theme.of(context).colorScheme.primaryContainer,
-              child: Generator(),
-            ),
-          ),
-        ],
-      ),
+        );
+      }
     );
   }
 }
@@ -193,4 +226,41 @@ class BigCard extends StatelessWidget {
       ),
     );
   }
+}
+
+class FavouritesPage extends StatelessWidget{
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+     var appState = context.watch<MyAppState>();
+      var pair = appState.current;
+     if(appState.fav.isEmpty){
+      return Center(
+        child: Text('No favourites yet!'),
+      );
+     }
+
+
+
+    return ListView(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(20),
+            child: Text('You have ${appState.fav.length} favourites'),
+
+          ),
+          for ( var pair in appState.fav)
+            ListTile(
+              leading: Icon(Icons.favorite),
+              title: Text(pair.asLowerCase),
+              ),
+          
+        ],
+      
+       
+      
+    );
+    
+  }
+  
 }
