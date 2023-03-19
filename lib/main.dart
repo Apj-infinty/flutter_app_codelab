@@ -46,7 +46,70 @@ class MyAppState extends ChangeNotifier {
   }
 }
 
+//split homepage into two
 class MyHomePage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Row(
+        children: [
+          Expanded(
+            child: SafeArea(
+              child: NavigationRail(
+                extended: false,
+                destinations: [
+                  NavigationRailDestination(
+                    icon: Icon(Icons.home),
+                    label: Text(
+                      'Home',
+                      style: TextStyle(
+                        fontFamily: 'MontserratAlternates',
+                        fontSize: 22,
+                      ),
+                    ),
+                  ),
+                  NavigationRailDestination(
+                    icon: Icon(Icons.favorite),
+                    label: Text(
+                      'Favorites',
+                      style: TextStyle(
+                        fontFamily: 'MontserratAlternates',
+                        fontSize: 22,
+                      ),
+                    ),
+                  ),
+                  NavigationRailDestination(
+                    icon: Icon(Icons.my_library_add), 
+                    label:  Text(
+                      'Library',
+                      style: TextStyle(
+                        fontFamily: 'MontserratAlternates',
+                        fontSize: 22,
+                      ),
+                    ),
+                  ),
+          
+                ],
+                selectedIndex: 0,
+                onDestinationSelected: (value) {
+                  print('selected: $value');
+                },
+              ),
+            ),
+          ),
+          Expanded(
+            child: Container(
+              color: Theme.of(context).colorScheme.primaryContainer,
+              child: Generator(),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class Generator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
@@ -54,14 +117,13 @@ class MyHomePage extends StatelessWidget {
 
     //icon
     IconData icon;
-    if(appState.fav.contains(pair)){
-      icon= Icons.favorite;
-    } else{
-      icon= Icons.favorite_border;
+    if (appState.fav.contains(pair)) {
+      icon = Icons.favorite;
+    } else {
+      icon = Icons.favorite_border;
     }
 
-    return Scaffold(
-      body: Center(
+    return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -77,7 +139,7 @@ class MyHomePage extends StatelessWidget {
                     appState.toggleFav();
                   },
                   icon: Icon(icon),
-                  label:  Text(
+                  label: Text(
                     'like',
                     style: TextStyle(
                       fontFamily: 'MontserratAlternates',
@@ -89,20 +151,18 @@ class MyHomePage extends StatelessWidget {
                   onPressed: () {
                     appState.getNext();
                   },
-                  
                   child: Text(
                     'next',
                     style: TextStyle(
                         fontFamily: 'MontserratAlternates', fontSize: 22),
                   ),
-                   
                 ),
               ],
             ),
           ],
         ),
-      ),
-    );
+      );
+    
   }
 }
 
