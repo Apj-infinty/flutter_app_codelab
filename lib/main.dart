@@ -385,7 +385,7 @@ class _HomePageState extends State<HomePage> {
               SmoothPageIndicator(
                 controller: controller,
                 count: pages.length,
-                effect: JumpingDotEffect(
+                effect: WormEffect(
                   dotHeight: 16,
                   dotWidth: 16,
                  // type: WormType.thin,
